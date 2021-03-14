@@ -76,8 +76,8 @@ router.patch('/:id', async (req, res) => {
     } = req;
 
     const { affectedRows } = await db.query({
-      query: `UPDATE todos SET ? WHERE id = ${db.connection.escape(id)}`,
-      data: body,
+      query: `UPDATE users SET ? WHERE id = ?`,
+      data: [body, id],
     });
 
     if (affectedRows === 0) {
@@ -95,7 +95,7 @@ router.delete('/:id', async (req, res) => {
     const { id } = req.params;
 
     const { affectedRows } = await db.query({
-      query: 'DELETE FROM todos WHERE id = ?',
+      query: 'DELETE FROM users WHERE id = ?',
       data: [id],
     });
 
