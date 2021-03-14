@@ -1,0 +1,25 @@
+.npmrc
+.env.*
+.cache
+
+# dependencies
+/node_modules
+
+# Build
+/dist
+/build
+
+# testing
+/coverage
+
+# misc
+.DS_Store
+*.env
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+yarn.lock
+
+# docker
+doc
