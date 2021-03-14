@@ -7,20 +7,26 @@ const db = new DB();
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    const offset = page * limit;
+    const offset = +page === 1 ? 0 : +page * +limit - 1;
+
     const data = await db.query({
       query: `
         SELECT * FROM users
-        LIMIT = ${page}, ${limit}
+        LIMIT ${offset}, ${limit}
       `,
-      data: [id],
     });
 
     if (!data) {
       throw new Error('Could not fetch');
     }
 
-    res.status(200).send({ data });
+    res.status(200).send({
+      page,
+      per_page: limit,
+      total: data.length,
+      total_pages: Math.ceil(data.length / limit),
+      data,
+    });
   } catch (err) {
     res.status(500).send({ error: err.message });
   }
@@ -29,7 +35,10 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const data = await db.query({ query: `SELECT * FROM users WHERE id = ?` });
+    const data = await db.query({
+      query: `SELECT * FROM users WHERE id = ?`,
+      data: [id],
+    });
 
     if (!data) {
       throw new Error('Could not fetch');
