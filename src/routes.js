@@ -6,7 +6,15 @@ const db = new DB();
 
 router.get('/', async (req, res) => {
   try {
-    const data = await db.query({ query: `SELECT * FROM todos` });
+    const { page = 1, limit = 10 } = req.query;
+    const offset = page * limit;
+    const data = await db.query({
+      query: `
+        SELECT * FROM users
+        LIMIT = ${page}, ${limit}
+      `,
+      data: [id],
+    });
 
     if (!data) {
       throw new Error('Could not fetch');
@@ -14,15 +22,30 @@ router.get('/', async (req, res) => {
 
     res.status(200).send({ data });
   } catch (err) {
-    res.status(500).send({ err: err.message });
+    res.status(500).send({ error: err.message });
   }
 });
 
-router.put('/', async (req, res) => {
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const data = await db.query({ query: `SELECT * FROM users WHERE id = ?` });
+
+    if (!data) {
+      throw new Error('Could not fetch');
+    }
+
+    res.status(200).send({ data });
+  } catch (err) {
+    res.status(500).send({ error: err.message });
+  }
+});
+
+router.post('/', async (req, res) => {
   try {
     const { body } = req;
     const { insertId } = await db.query({
-      query: 'INSERT INTO todos SET ?',
+      query: 'INSERT INTO users SET ?',
       data: body,
     });
 
@@ -30,9 +53,9 @@ router.put('/', async (req, res) => {
       throw new Error('Could not insert');
     }
 
-    res.status(201).send({ insertId });
+    res.status(201).send({ data: { id: insertId, ...body } });
   } catch (err) {
-    res.status(500).send({ err: err.message });
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -52,9 +75,9 @@ router.patch('/:id', async (req, res) => {
       throw new Error('could not update');
     }
 
-    res.status(200).send({});
+    res.status(200).send({ data: { body } });
   } catch (err) {
-    res.status(500).send({ err: err.message });
+    res.status(500).send({ error: err.message });
   }
 });
 
@@ -73,7 +96,7 @@ router.delete('/:id', async (req, res) => {
 
     res.status(200).send({});
   } catch (err) {
-    res.status(500).send({ err: err.message });
+    res.status(500).send({ error: err.message });
   }
 });
 

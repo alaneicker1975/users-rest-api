@@ -8,7 +8,7 @@ const port = process.env.PORT || 4000;
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use('/api/todos', routes);
+app.use('/api/users', routes);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
