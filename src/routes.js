@@ -37,6 +37,7 @@ router.get('/:id', async (req, res) => {
     const { id } = req.params;
     const data = await db.query({
       query: `SELECT * FROM users WHERE id = ?`,
+      isArray: false,
       data: [id],
     });
 
@@ -84,8 +85,9 @@ router.patch('/:id', async (req, res) => {
       throw new Error('could not update');
     }
 
-    res.status(200).send({ data: { body } });
+    res.status(200).send({ data: body });
   } catch (err) {
+    console.log(err.message);
     res.status(500).send({ error: err.message });
   }
 });
