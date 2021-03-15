@@ -7,6 +7,7 @@ const db = new DB();
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
+    console.log(limit);
     const offset = +page === 1 ? 0 : +page * +limit - 1;
 
     const data = await db.query({
