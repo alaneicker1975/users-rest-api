@@ -16,7 +16,6 @@ router.get('/', async (req, res) => {
       offset = 0;
     } else if (thePage === 2) {
       offset = theLimit;
-      +1;
     } else {
       offset = thePage * theLimit - theLimit;
     }
