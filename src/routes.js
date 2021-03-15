@@ -7,8 +7,29 @@ const db = new DB();
 router.get('/', async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
-    console.log(limit);
-    const offset = +page === 1 ? 0 : +page * +limit - 1;
+
+    const thePage = +page;
+    const theLimit = +limit;
+    let offset;
+
+    if (thePage === 1) {
+      offset = 0;
+    } else if (thePage === 2) {
+      offset = theLimit;
+      +1;
+    } else {
+      offset = thePage * theLimit - theLimit;
+    }
+
+    const [rowCount] = Object.values(
+      await db.query({
+        query: `SELECT COUNT(id) FROM users`,
+        isArray: false,
+      }),
+    );
+
+    console.log('page', thePage);
+    console.log(`LIMIT ${offset}, ${limit}`);
 
     const data = await db.query({
       query: `
@@ -22,10 +43,10 @@ router.get('/', async (req, res) => {
     }
 
     res.status(200).send({
-      page,
-      per_page: limit,
-      total: data.length,
-      total_pages: Math.ceil(data.length / limit),
+      page: thePage,
+      per_page: theLimit,
+      total: rowCount,
+      total_pages: Math.ceil(rowCount / limit),
       data,
     });
   } catch (err) {
