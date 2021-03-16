@@ -3,6 +3,13 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+console.log({
+  host: process.env.HOST,
+  user: process.env.USER_NAME,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE,
+});
+
 class DB {
   constructor() {
     this.connection = null;
