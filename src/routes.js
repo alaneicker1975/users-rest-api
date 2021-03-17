@@ -27,9 +27,6 @@ router.get('/', async (req, res) => {
       }),
     );
 
-    console.log('page', thePage);
-    console.log(`LIMIT ${offset}, ${limit}`);
-
     const data = await db.query({
       query: `
         SELECT * FROM users
@@ -42,6 +39,7 @@ router.get('/', async (req, res) => {
     }
 
     res.status(200).send({
+      id: thePage,
       page: thePage,
       per_page: theLimit,
       total: rowCount,
